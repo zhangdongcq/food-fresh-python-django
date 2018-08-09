@@ -1,0 +1,155 @@
+{% extends 'base_cart.html'%}
+
+{% block cart %}
+    <div class="total_count">All Selections<em>0</em> Item(s)</div>
+    <ul class="cart_list_th clearfix">
+		<li class="col01">Name</li>
+		<li class="col02">Unit</li>
+		<li class="col03">Price</li>
+		<li class="col04">Quantity</li>
+		<li class="col05">Subtotal</li>
+		<li class="col06">Operation</li>
+	</ul>
+<form action="/order/" method="get">
+	<!--{% csrf_token %}-->
+
+
+
+	{% for cart in carts %}
+	<ul class="cart_list_td clearfix" id="{{cart.id}}">
+		<li class="col01"><input type="checkbox" name="cart_id" value="{{cart.id}}" checked></li>
+		<li class="col02"><img src="/static/{{cart.goods.gpic}}"></li>
+		<li class="col03">{{cart.goods.gtitle}}<br></li>
+		<li class="col04">{{cart.goods.gunit}}</li>
+		<li class="col05">{{cart.goods.gprice}}</li>
+		<li class="col06">
+			<div class="num_add">
+				<a href="javascript:;" class="add fl">+</a>
+				<input type="text" class="num_show fl" value="{{cart.count}}">
+				<a href="javascript:;" class="minus fl">-</a>
+			</div>
+		</li>
+		<li class="col07">{{cart.goods.gprice}}</li>
+		<li class="col08"><a href="javascript:cart_del({{cart.id}});">Remove</a></li>
+	</ul>
+    {% endfor%}
+
+	<ul class="settlements">
+		<li class="col01"><input type="checkbox" id="check_all" checked="checked"></li>
+		<li class="col02">Select All</li>
+		<li class="col03">Total：<span>$</span><em id="total">0</em><br>Total <b class='total_count1'>0</b> item(s)</li>
+		<li class="col04"><input type="submit" value="Checkout" class="cart_btn"></li>
+	</ul>
+</form>
+
+<script type="text/javascript">
+	//Remove
+	function cart_del(cart_id){
+		del=confirm('Are you sure to remove the item?');
+		if(del){
+			$.get('/cart/delete'+cart_id+'/',function(data){
+				if (data.ok == 1){
+					$('ul').remove('#'+cart_id);
+					total();
+				}
+			});
+		}
+	}
+	//Calculate subtotal and total
+    function total() {
+		total1=0;
+		total_count=0;
+		$('.col07').each(function () {
+			//Get Quantity
+			count=$(this).prev().find('input').val();
+			//Get unit price
+			price=$(this).prev().prev().text();
+			//Calculate subtotal
+			total0=parseFloat(count)*parseFloat(price);
+			$(this).text(total0.toFixed(2));
+		    //current is selected?
+			if($(this).siblings('.col01').children('input').prop('checked')){
+				total1+=total0;
+				total_count++;
+			}
+        });
+		//Show total
+		$('#total').text(total1.toFixed(2));
+		$('.total_count1').text(total_count);
+    }
+
+$(function () {
+  total();
+   //(Dis)Select All
+		$('#check_all').click(function () {
+		    state=$(this).prop('checked');
+        	$(':checkbox:not(#check_all)').prop('checked',state);
+        	total();
+        });
+
+		//Select
+		$(':checkbox:not(#check_all)').click(function () {
+			if($(this).prop('checked')){
+			    if($(':checked').length+1==$(':checkbox').length){
+			        $('#check_all').prop('checked',true);
+				}
+			}else{
+			    $('#check_all').prop('checked',false);
+			}
+			total();
+        });
+    //Amount +
+  $('.add').click(function() {
+  	txt=$(this).next();
+  	txt.val(parseFloat(txt.val())+1).blur();
+  	total();
+  });
+  // //Amount +
+  // $('.add').click(function() {
+  // 	txt=$(this).next();
+  // 	count=parseInt(txt.val());
+  //
+  //   txt.val(count+1).blur();
+  //
+  // 	total();
+  // });
+  //Amount -
+  $('.minus').click(function () {
+			txt=$(this).prev();
+			count=parseFloat(txt.val());
+			if(count<=1){
+			    txt.val(1).blur();
+			}else{
+			    txt.val(count-1).blur();
+			}
+			total();
+        });
+  //Manual Update
+  $('.num_show').blur(function(){
+  	count=$(this).val();
+  	if(count<=0){
+  	    alert('The quantity is invalid');
+  		$(this).focus();
+  		return;
+  	}else if(count>=100){
+  	    alert('The amount could not exceed 100');
+  	    $(this).focus();
+  	    return;
+    }
+  	cart_id=$(this).parents('.cart_list_td').attr('id');
+  	$.get('/cart/edit'+cart_id+'_'+count+'/',function(data){
+  		if(data.ok==0){
+  			//Edit successfully
+  			total();
+  		}
+  		else{
+  			//Failed to edit
+  			$(this).val(data.ok);
+  		}
+  	})
+  });
+});
+ </script>
+{% endblock cart %}
+
+

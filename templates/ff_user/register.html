@@ -1,0 +1,66 @@
+   {%extends 'base.html'%}
+   {%load static from staticfiles%}
+    {% block head_register%}
+	    <script type="text/javascript" src="{% static  'js/register.js' %}"></script>
+
+	{% endblock head_register%}
+
+    {% block body%}
+
+	<div class="register_con">
+		<div class="l_con fl">
+			<a class="reg_logo"><img src="/static/images/logo02.png"></a>
+			<div class="reg_slogan">Fresh Food Everyday Guaranteed</div>
+			<div class="reg_banner"></div>
+		</div>
+
+		<div class="r_con fr">
+			<div class="reg_title clearfix">
+				<h1>User Register</h1>
+				<a href="/user/login">Login</a>
+			</div>
+			<div class="reg_form clearfix">
+				<form method="post" action="/user/register_handle/">
+                    {% csrf_token %}
+				<ul>
+					<li>
+						<label>Username:</label>
+						<input type="text" name="user_name" id="user_name">
+						<span class="error_tip">Reminder</span>
+					</li>					
+					<li>
+						<label>Password:</label>
+						<input type="password" name="pwd" id="pwd">
+						<span class="error_tip">Reminder</span>
+					</li>
+					<li>
+						<label>Pass Again:</label>
+						<input type="password" name="cpwd" id="cpwd">
+						<span class="error_tip">Reminder</span>
+					</li>
+					<li>
+						<label>Email:</label>
+						<input type="text" name="email" id="email">
+						<span class="error_tip">Reminder</span>
+					</li>
+                    <li>
+						<label>Phone:</label>
+						<input type="text" name="phone" id="phone">
+						<span class="error_tip">Reminder</span>
+					</li>
+					<li class="agreement">
+						<input type="checkbox" name="allow" id="allow" checked="checked">
+						<label>Agree "Food Fresh Terms & Condition"</label>
+						<span class="error_tip2">Reminder</span>
+					</li>
+					<li class="reg_sub">
+						<input type="submit" value="Regsiter" name="">
+					</li>
+				</ul>				
+				</form>
+			</div>
+		</div>
+
+	</div>
+
+{% endblock body %}

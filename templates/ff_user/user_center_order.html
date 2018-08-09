@@ -1,0 +1,79 @@
+{% extends 'base_user_center.html'%}
+{% block user_center %}
+
+	<div class="main_con clearfix">
+		<div class="left_menu_con clearfix">
+			<h3>User Center</h3>
+			<ul>
+				<li><a href="/user/info/">· User Profile</a></li>
+				<li><a href="" class="active">· All Orders</a></li>
+				<li><a href="/user/site/">· Ship To</a></li>
+			</ul>
+		</div>
+		<div class="right_content clearfix">
+				<h3 class="common_title2">Total Orders:</h3>
+            {% if paginator.count > 0 %}
+			    {%for order in page%}
+				<ul class="order_list_th w978 clearfix">
+					<li class="col01">{{order.odate}}</li>
+					<li class="col02">Order: {{order.oid}}</li>
+					<li class="col02 stress">{% if order.oIsPay%}Paid{%else%}To Pay{%endif%}</li>
+				</ul>
+
+				<table class="order_list_table w980">
+					<tbody>
+						<tr>
+							<td width="55%">
+                                {% for detail in order.orderdetailinfo_set.all%}
+								<ul class="order_goods_list clearfix">					
+									<li class="col01"><img src="/static/{{detail.goods.gpic}}"></li>
+                                    <li class="col02">{{detail.goods.gtitle|slice:'10'}}<em><span>{{detail.price}}</span>/{{detail.goods.gunit}}</em></li>
+									<li class="col03">{{detail.count}}</li>
+									<li class="col04">$ 0.00</li>
+								</ul>
+                                {%endfor%}
+							</td>
+							<td width="15%">$ {{order.ototal}}</td>
+                            {% if order.oIsPay %}
+							<td width="15%">Paid</td>
+                            {%else%}
+                            <td width="15%">To Pay</td>
+							<td width="15%"><a href="/order/pay{{order.oid}}/" class="oper_btn">Checkout</a></td>
+                            {%endif%}
+						</tr>
+					</tbody>
+				</table>
+				{%endfor%}
+
+
+				<div class="pagenation">
+                    {%if page.has_previous%}
+					<a href="/user/order{{page.previous_page_number}}/">< Pre</a>
+                    {%endif%}
+                    {%for pindex in paginator.page_range%}}
+                    {%if pindex == page.numer%}
+					<a href="#" class="active">{{pindex}}</a>
+                    {%else%}
+                    <a href="/user/order{{pindex}}/">{{pindex}}</a>
+                    {%endif%}
+                    {%endfor%}
+
+                    {%if page.has_next%}
+					<a href="/user/order{{page.next_page_number}}/">Next></a>
+                    {%endif%}
+				</div>
+            {%else%}
+            No Order Record
+            {%endif%}
+		</div>
+	</div>
+<script type="text/javascript">
+    $(function () {
+		$('.col04').each(function () {
+			num=parseFloat($(this).prev().text());
+			price=parseFloat($(this).prev().prev().find('span').text());
+			$(this).text('$ '+num*price)
+        });
+	});
+</script>
+{% endblock user_center %}

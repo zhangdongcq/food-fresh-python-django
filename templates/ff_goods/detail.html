@@ -1,0 +1,168 @@
+{% extends 'base_goods.html'%}
+
+{%block nav_detail%}
+<div class="navbar_con">
+    <div class="navbar clearfix">
+        <div class="subnav_con fl">
+            <h1>All Categories</h1>
+            <span></span>
+            <ul class="subnav">
+                <li><a href="/goods/list1_1_1/" class="fruit">Fresh Fruits</a></li>
+                <li><a href="/goods/list2_1_1/" class="meet">Daily Meat</a></li>
+                <li><a href="/goods/list3_1_1/" class="egg">Grase Oils</a></li>
+                <li><a href="/goods/list4_1_1/" class="vegetables">Pop Devices</a></li>
+                <li><a href="/goods/list5_1_1/" class="ice">Luxury Cars</a></li>
+                <li><a href="/goods/list6_1_1/" class="ice">Milk Products</a></li>
+            </ul>
+        </div>
+        <ul class="navlist fl">
+            <li><a href="">Home</a></li>
+            <li class="interval">|</li>
+            <li><a href="">手机生鲜</a></li>
+            <li class="interval">|</li>
+            <li><a href="">抽奖</a></li>
+        </ul>
+    </div>
+</div>
+
+
+<div class="breadcrumb">
+    <a href="#">All Categories</a>
+    <span> > </span>
+    <a href="/goods/list{{typeinfo.id}}_1_1/">{{title}}</a>
+</div>
+<!--Goods Detail Page Nav-->
+{%endblock nav_detail%}
+{% block detail %}
+	<div class="goods_detail_con clearfix">
+		<div class="goods_detail_pic fl"><img src="/static/{{g.gpic}}"></div>
+
+		<div class="goods_detail_list fr">
+			<h3>{{g.gtitle}}</h3>
+			<p>{{g.gintro}}</p>
+			<div class="prize_bar">
+				<span class="show_pirze">$<em id="gprice">{{g.gprice}}</em></span>
+				<span class="show_unit">Unit: {{g.gunit}}</span>
+			</div>
+			<div class="goods_num clearfix">
+				<div class="num_name fl">Quantity:</div>
+				<div class="num_add fl">
+					<input type="text" class="num_show fl" value="1">
+					<a href="javascript:add();" class="add fr">+</a>
+					<a href="javascript:minus();" class="minus fr">-</a>
+				</div> 
+			</div>
+			<div class="total">Total: $<em id="gtotal">{{g.gprice}}</em></div>
+			<div class="operate_btn">
+				<a href="javascript:;" class="buy_btn" id="buy_btn">Buy Now</a>
+				<a href="javascript:;" class="add_cart" id="add_cart">Add To Cart</a>
+			</div>
+		</div>
+	</div>
+<div class="main_wrap clearfix">
+		<div class="l_wrap fl clearfix">
+			<div class="new_goods">
+				<h3>New Arrivals</h3>
+				<ul>
+                    {% for new in news %}
+					<li>
+						<a href="/goods/{{new.id}}/"><img src="/static/{{new.gpic}}"></a>
+						<h4><a href="/goods/{{new.id}}/">{{new.gtitle}}</a></h4>
+						<div class="prize">${{new.gprice}}</div>
+					</li>
+                    {% endfor %}
+				</ul>
+			</div>
+		</div>
+		<div class="r_wrap fr clearfix">
+			<ul class="detail_tab clearfix">
+				<li class="active">Product Introduction</li>
+				<li>Comment</li>
+			</ul>
+
+			<div class="tab_content">
+				<dl>
+					<dt>Detail:</dt>
+					<dd>{{g.gcontent|safe}} </dd>
+				</dl>
+			</div>
+		</div>
+</div>
+<div class="add_jump"></div>
+<script type="text/javascript">
+		var $add_x = $('#add_cart').offset().top;
+		var $add_y = $('#add_cart').offset().left;
+		var $to_x = $('#show_count').offset().top;
+		var $to_y = $('#show_count').offset().left;
+		$(".add_jump").css({'left':$add_y+80,'top':$add_x+10,'display':'block'});
+		//Add to Cart
+		$('#add_cart').click(function(){
+		    //If login was not made then reirect to login
+			if($('.login_btn').text().indexOf('Login')>=0){
+			    alert('Please login to buy products');
+			    location.href='/user/login/';
+				return;
+			}
+		    //Animation
+			$(".add_jump").stop().animate({
+				'left': $to_y+7,
+				'top': $to_x+7},
+				"fast", function() {
+					$(".add_jump").fadeOut('fast',function () {});
+			});
+			//Asyn
+			num=parseInt($('.num_show').val());
+			$.get('/cart/add{{g.id}}_'+num+'/',function (data){
+				$('#show_count').text(data.count);
+			});
+		});
+
+
+
+</script>
+<script type="text/javascript">
+		function add() {
+	    num=parseFloat($('.num_show').val());
+	    $('.num_show').val(num+1);
+	    $('.num_show').blur();
+    }
+    function minus() {
+	    num=parseFloat($('.num_show').val());
+	    if(num<=1){
+	    	return;
+	    }
+	    $('.num_show').val(num-1);
+	    $('.num_show').blur();
+    }
+	$(function () {
+		$('.num_show').blur(function () {
+		    num=parseInt($('.num_show').val());
+		    if(num<=1){
+		    	num=1;
+		    }
+		    price=parseFloat($('#gprice').text());
+		    total=num*price;
+		    $('.num_show').val(num);
+		    $('#gtotal').text('$' + total.toFixed(2));
+        });
+     //Immediate purchase
+		$('#buy_btn').click(function () {
+			//If no login then alert
+			if($('.login_btn').text().indexOf('Login')>=0){
+			    alert('Please login first');
+			    location.href='/user/login/';
+				return;
+			}
+			//Add to cart
+			num=parseInt($('.num_show').val());
+			$.get('/cart/add{{g.id}}_'+num+'/',function (data) {
+			    //redirect to order page
+				location.href='/order/?cart_id='+data.cart_id;
+            });
+        });
+    });
+</script>
+
+{% endblock detail %}
+
+

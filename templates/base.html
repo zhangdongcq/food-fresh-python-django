@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>Food Fresh - {{ title }}</title>
+	<link rel="stylesheet" type="text/css" href="/static/css/reset.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
+	<script type="text/javascript" src="/static/js/jquery-1.12.4.min.js"></script>
+    {% block head_register%}{% endblock head_register%}
+    {% block head1 %} {% endblock head1%}
+    {% block head2 %} {% endblock head2%}
+</head>
+<body>
+<div class="header_con">
+    <div class="header">
+    <div class="welcome fl">Welcome to Food Fresh</div>
+    <div class="fr">
+        {% if request.session.user_name|default:'' != '' %}
+        <div class="user_link fl">
+            Welcome: <em>{{request.session.user_name}}</em>
+            <span>|</span>
+            <a href="/user/logout/">Logout</a>
+            <span>|</span>
+            <a href="/user/info/">User Center</a>
+            <span>|</span>
+            <a href="/cart/">My Cart</a>
+            <span>|</span>
+            <a href="/user/order/">My Order</a>
+        </div>
+        {%else%}
+        <div class="login_btn fl">
+            <a href="/user/login/">Login</a>
+            <span>|</span>
+            <a href="/user/register/">Signup</a>
+        </div>
+        {%endif%}
+    </div>
+    </div>
+</div>
+
+
+{% block body %}
+{% endblock body %}
+<div class="footer no-mp">
+		<div class="foot_link">
+			<a href="#">Company</a>
+			<span>|</span>
+			<a href="#">Contact</a>
+			<span>|</span>
+			<a href="#">Jobs</a>
+			<span>|</span>
+			<a href="#">Links</a>
+		</div>
+		<p>CopyRight © 2018 Canada Fresh Food Co., LTD All Rights Reserved</p>
+		<p>Tel: +1 800 8888 </p>
+	</div>
+</body>
+</html>

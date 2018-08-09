@@ -1,0 +1,16 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Order Payment</title>
+</head>
+<body>
+<h1>This is a demo page for order payment</h1>
+Order Number: {{order.oid}}<br>
+Amount to Pay: {{order.ototal}}<br>
+Transaction Succeed. You will be redirected to User Center within 3 seconds.
+<script>
+    setTimeout('location.href="/user/order/";',3000);
+</script>
+</body>
+</html>

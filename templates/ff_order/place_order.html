@@ -1,0 +1,103 @@
+{%extends 'base_order.html'%}
+{% block goods_center %}
+
+
+
+	<h3 class="common_title">Receipt Address: </h3>
+
+	<div class="common_list_con clearfix">
+		<dl>
+			<dt>Ship to:</dt>
+			<dd>{{user.uaddress}}
+			({{user.ureceipt}})
+			{{user.uphone}}</dd>
+		</dl>
+		<a href="/user/site/" class="edit_site">Edit Address</a>
+
+	</div>
+	
+	<h3 class="common_title">Payment Method</h3>
+	<div class="common_list_con clearfix">
+		<div class="pay_style_con clearfix">
+			<input type="radio" name="pay_style" checked>
+			<label class="cash">Pay at Door</label>
+			<input type="radio" name="pay_style">
+			<label class="weixin">Paypal</label>
+			<input type="radio" name="pay_style">
+			<label class="zhifubao">AliPay</label>
+			<input type="radio" name="pay_style">
+			<label class="bank">Credit Cart</label>
+		</div>
+	</div>
+
+	<h3 class="common_title">Items List</h3>
+	
+	<div class="common_list_con clearfix">
+		<ul class="goods_list_th clearfix">
+			<li class="col01">Name</li>
+			<li class="col02">Unit</li>
+			<li class="col03">Price</li>
+			<li class="col04">Quantity</li>
+			<li class="col05">Subtotal</li>
+		</ul>
+
+		{%for cart in carts%}
+		<ul class="goods_list_td clearfix">
+			<li class="col01">{{forloop.counter}}</li>			
+			<li class="col02"><img src="/static/{{cart.goods.gpic}}"></li>
+			<li class="col03">{{cart.goods.gtitle|slice:'10'}}...</li>
+			<li class="col04">{{cart.goods.gunit}}</li>
+			<li class="col05"><span>{{cart.goods.gprice}}</span></li>
+			<li class="col06">{{cart.count}}</li>
+			<li class="col07">100</li>
+		</ul>
+		{%endfor%}
+		
+	</div>
+
+	<h3 class="common_title">Total</h3>
+
+	<div class="common_list_con clearfix">
+		<div class="settle_con">
+			<div class="total_goods_count"><em id='total1'>0</em> item(s), Total <b id='total2'>$ 0.00</b></div>
+			<div class="transit">Handling Fee: $<b id="handlingFee">130.00</b></div>
+			<div class="total_pay">Payment: <b id='total3'>$ 0.00</b></div>
+		</div>
+	</div>
+
+	<div class="order_submit clearfix">
+		<form method='post' action='/order/order_handle/'>
+		{%csrf_token%}
+		<input type="hidden" name="address" value='{{user.uaddress}} ({{user.ureceipt}}) ({{user.uphone}})'>
+		<input type="hidden" name="total" value='0' id='total4'>
+		<input type="hidden" name="cart_ids" value='{{cart_ids}}'>
+		<input type="submit" id='order_btn' value='submit' class='order_btn'>
+		</form>
+	</div>	
+
+	
+<script type="text/javascript">
+		$(function(){
+			Quantity=0; //Quantity
+			TotalCharge=0; //Amount
+			$('.col07').each(function(){
+				count=$(this).prev().text();//get quantity
+				price=$(this).prev().prev().text();//get unit price
+				subtotal=parseInt(count) * parseFloat(price);
+				Quantity++;
+				TotalCharge+=subtotal;
+
+				$(this).text('$ '+subtotal.toFixed(2));
+     });
+    handlingFee = parseFloat($('#handlingFee').text());
+    $('#total1').text(Quantity);
+    $('#total2').text('$ '+TotalCharge.toFixed(2));
+    $('#total3').text('$ '+(TotalCharge+handlingFee).toFixed(2));
+    $('#total4').val((TotalCharge+handlingFee).toFixed(2));
+
+		});
+	</script>
+
+
+
+{%endblock goods_center%}
