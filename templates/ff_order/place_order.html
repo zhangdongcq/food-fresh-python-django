@@ -1,21 +1,16 @@
 {%extends 'base_order.html'%}
 {% block goods_center %}
+<h3 class="common_title">Receipt Address: </h3>
 
-
-
-	<h3 class="common_title">Receipt Address: </h3>
-
-	<div class="common_list_con clearfix">
-		<dl>
-			<dt>Ship to:</dt>
-			<dd>{{user.uaddress}}
-			({{user.ureceipt}})
-			{{user.uphone}}</dd>
-		</dl>
-		<a href="/user/site/" class="edit_site">Edit Address</a>
-
-	</div>
-	
+<div class="common_list_con clearfix">
+	<dl>
+		<dt>Ship to:</dt>
+		<dd>{{user.uaddress}}
+		({{user.ureceipt}})
+		{{user.uphone}}</dd>
+	</dl>
+	<a href="/user/site/" class="edit_site">Edit Address</a>
+</div>
 	<h3 class="common_title">Payment Method</h3>
 	<div class="common_list_con clearfix">
 		<div class="pay_style_con clearfix">
@@ -29,7 +24,6 @@
 			<label class="bank">Credit Cart</label>
 		</div>
 	</div>
-
 	<h3 class="common_title">Items List</h3>
 	
 	<div class="common_list_con clearfix">
